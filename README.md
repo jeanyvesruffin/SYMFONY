@@ -8,8 +8,11 @@
 - [Creation du site](#creation-du-site)
   - [Principe de routing et services](#principe-de-routing-et-services)
     - [A l'aide du fichier routes.yaml](#a-laide-du-fichier-routesyaml)
-      - [Controller vos services containers et routes avec la console](#controller-vos-services-containers-et-routes-avec-la-console)
     - [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
+  - [Principe de Templates](#principe-de-templates)
+    - [Creation de la page Twig](#creation-de-la-page-twig)
+    - [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
+    - [Bootstrap](#bootstrap)
 
 <!-- /TOC -->
 
@@ -61,9 +64,24 @@ symfony server:start
 
 ## Utilisation de la console php
 
+Pour avoir la liste des comandes de la console.
 ```cmd
 php bin/console
-// Retournera la liste des commandes utiles
+```
+
+Pour controller les routes
+```cmd
+php bin/console debug:route
+```
+
+Pour controller les containers de services
+```cmd
+php bin/console debug:container
+```
+
+Pour controller les injections
+```cmd
+php bin/console debug:autowiring
 ```
 
 # Creation du site
@@ -156,34 +174,112 @@ App\Controller\HomeController:
         tags: ["controller.service_arguments"]
 ```
 
-Puis preciser le type de notre precedente variable twig;
-
-Dans le fichier HomeController.php
-
-```php
-/**
-    * Undocumented variable
-    *
-    * @var Environment
-    */
-  protected $twig;
-```
-
-
-#### Controller vos services containers et routes avec la console
-
-Pour controller les routes
-```cmd
-php bin/console debug:route
-```
-
-Pour controller les containers de services
-```cmd
-php bin/console debug:container
-```
+>La variable twig etant en faite l'injection de Twig (alias) verifier a l'aide de la ligne de commande `php bin/console debug:autowiring`, nous pouvons alors supprimer entierement le service precedemment mis en place.
 
 
 ###  A l'aide d'annotation dans nos controller
 
  **TODO A FAIRE IMPERATIVEMENT A L'AIDE DES COURS OCR**
+
+## Principe de Templates
+
+### Creation de la page Twig
+
+Reprenons notre fichier `home.html.twig` est y ajouter cela:
+
+```html
+{% extends "base.html.twig" %}
+{% block body %}
+<h1>Bienvenue sur la homepage</h1>
+{% endblock %}
+```
+
+Dans le fichier `home.html.twig` nous faisons un extends, permettant d'heriter de la structure html du template du fichier `base.html.twig`.
+Puis, nous creons un block body ou nous inserons notre precedent `<h1>`. Le fichier `home.html.twig` doit respecter le template extends.
+
+### Gerer le CSS et Javascript
+
+[Gerer le CSS et Javascript](https://symfony.com/doc/current/frontend.html)
+
+```cmd
+composer require symfony/flex
+composer remove symfony/symfony
+composer require annotations asset orm-pack twig \
+logger mailer form security translation validator
+composer require --dev dotenv maker-bundle orm-fixtures profiler
+rm -rf vendor/*
+composer install
+composer require symfony/webpack-encore-bundle
+yarn install
+```
+
+
+### Bootstrap
+
+Afin de donner un peu plus de style a notre page nous allons utiliser bootstrat.
+
+[Bootstrap](https://getbootstrap.com/)
+
+[Symfony Bootstrap](https://symfony.com/doc/current/frontend/encore/bootstrap.html)
+
+> Afin de retirer les option de protections d'acces au fichier, executer la commande ci-dessous dans votre powershell en mode administrateur.
+```
+set-executionpolicy unrestricted
+```
+
+Installation
+
+```cmd
+yarn add bootstrap --dev
+```
+Importer bootstrap a votre application, dans le fichier MaSuperAgence\assets\styles\global.scss.
+
+```scss
+@import "~bootstrap/scss/bootstrap";
+```
+Importer du JavaScript Bootstrap
+
+```cmd
+ yarn add jquery popper.js --dev
+```
+
+
+composer require symfony/webpack-encore-bundle
+yarn install
+yarn add @symfony/webpack-encore --dev
+yarn add bootstrap --dev
+yarn add jquery popper.js --dev
+```
+
+Dans le fichier MaSuperAgence\assets\styles\app.css
+
+
+
+Dans le fichier base.html.twig
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        {% block stylesheets %}{% endblock %}
+
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    </body>
+</html>
+
+```
+
+
+
+
+
 

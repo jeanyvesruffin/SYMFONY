@@ -7,11 +7,11 @@ use Twig\Environment;
 
 class HomeController
 {
-    // /**
-    //  * Undocumented variable
-    //  *
-    //  * @var Environment
-    //  */
+    /**
+     * Undocumented variable
+     *
+     * @var Environment
+     */
     private $twig;
 
     public function __construct(Environment $twig)
