@@ -3,16 +3,18 @@
 - [SYMFONY](#symfony)
 - [Prerequis](#prerequis)
 - [Creation du projet](#creation-du-projet)
-  - [Demarrer le projet symfony](#demarrer-le-projet-symfony)
-  - [Utilisation de la console php](#utilisation-de-la-console-php)
+	- [Demarrer le projet symfony](#demarrer-le-projet-symfony)
+	- [Utilisation de la console php](#utilisation-de-la-console-php)
 - [Creation du site](#creation-du-site)
-  - [Principe de routing et services](#principe-de-routing-et-services)
-    - [A l'aide du fichier routes.yaml](#a-laide-du-fichier-routesyaml)
-    - [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
-  - [Principe de Templates](#principe-de-templates)
-    - [Creation de la page Twig](#creation-de-la-page-twig)
-    - [Bootstrap](#bootstrap)
-    - [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
+	- [Principe de routing et services](#principe-de-routing-et-services)
+		- [A l'aide du fichier routes.yaml](#a-laide-du-fichier-routesyaml)
+		- [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
+	- [Principe de Templates](#principe-de-templates)
+		- [Creation de la page Twig](#creation-de-la-page-twig)
+		- [Bootstrap](#bootstrap)
+		- [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
+	- [Ajout d'une barre de navigation](#ajout-dune-barre-de-navigation)
+	- [Creation de la second page](#creation-de-la-second-page)
 
 <!-- /TOC -->
 
@@ -179,7 +181,7 @@ App\Controller\HomeController:
 
 ###  A l'aide d'annotation dans nos controller
 
- **TODO A FAIRE IMPERATIVEMENT A L'AIDE DES COURS OCR**
+[Nous utiliserons cette methode plus loin](../README.md#ancre_annot)
 
 ## Principe de Templates
 
@@ -227,6 +229,18 @@ Importer du JavaScript Bootstrap
 ```cmd
  yarn add jquery popper.js --dev
 ```
+Importer votre configuration sur MaSuperAgence\assets\app.js
+```js
+// any CSS you import will output into a single css file (app.css in this case)
+import './styles/app.css';
+// start the Stimulus application
+import './bootstrap';
+require('.\styles\global.scss');
+const $ = require('jquery');
+global.$ = global.jQuery = $;
+require('bootstrap');
+```
+
 ### Gerer le CSS et Javascript
 
 [Gerer le CSS et Javascript](https://symfony.com/doc/current/frontend.html)
@@ -242,8 +256,6 @@ composer install
 composer require symfony/webpack-encore-bundle
 yarn install
 ```
-
-
 
 Dans le fichier base.html.twig
 
@@ -272,9 +284,67 @@ Dans le fichier base.html.twig
 
 Dans le fichier home.html.twig, a la'aide de lm'autocompletion de l'ide, faire un jumbotron (template bootstrap).
 
+```html
+{% extends "base.html.twig" %}
+{% block body %}
+	<div class="jumbotron text-center">
+		<h1 class="display-4">Immo RUFFIN</h1>
+		<p class="lead">Bienvenue, sur le site N°1 de la location immobilière</p>
+		<hr class="my-4">
+		</div>
+{% endblock %}
+```
 
+## Ajout d'une barre de navigation
 
+[Navbar Component Bootstrap](https://getbootstrap.com/docs/4.0/components/navbar/)
 
+Copier/coller le code de l'adresse si dessus dans notre templet de `MaSuperAgence\templates\base.html.twig` et modifier le a votre quise.
+Vous pouvez utiliser Twig pour la redirection lors du clic sur Mon agence, en ajoutant dans le href le helper twig path `href="{{ path('home')}}"`
 
+## Creation de la second page
 
+Celle-ci nous retournera la liste des biens (lien "Acheter").
 
+Dans le fichier MaSuperAgence\templates\base.html.twig
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome at Home!
+			{% endblock %}
+		</title>
+		{% block stylesheets %}
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+		{% endblock %}
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="{{ path('home')}}">Mon agence</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('property.index')}}">Acheter
+						</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		{% block body %}{% endblock %}
+		{% block javascripts %}{% endblock %}
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</body>
+</html>
+```
+
+[ici](#ancre_annot) 
