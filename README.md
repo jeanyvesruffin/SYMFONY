@@ -11,8 +11,8 @@
     - [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
   - [Principe de Templates](#principe-de-templates)
     - [Creation de la page Twig](#creation-de-la-page-twig)
-    - [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
     - [Bootstrap](#bootstrap)
+    - [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
 
 <!-- /TOC -->
 
@@ -197,23 +197,6 @@ Reprenons notre fichier `home.html.twig` est y ajouter cela:
 Dans le fichier `home.html.twig` nous faisons un extends, permettant d'heriter de la structure html du template du fichier `base.html.twig`.
 Puis, nous creons un block body ou nous inserons notre precedent `<h1>`. Le fichier `home.html.twig` doit respecter le template extends.
 
-### Gerer le CSS et Javascript
-
-[Gerer le CSS et Javascript](https://symfony.com/doc/current/frontend.html)
-
-```cmd
-composer require symfony/flex
-composer remove symfony/symfony
-composer require annotations asset orm-pack twig \
-logger mailer form security translation validator
-composer require --dev dotenv maker-bundle orm-fixtures profiler
-rm -rf vendor/*
-composer install
-composer require symfony/webpack-encore-bundle
-yarn install
-```
-
-
 ### Bootstrap
 
 Afin de donner un peu plus de style a notre page nous allons utiliser bootstrat.
@@ -223,7 +206,9 @@ Afin de donner un peu plus de style a notre page nous allons utiliser bootstrat.
 [Symfony Bootstrap](https://symfony.com/doc/current/frontend/encore/bootstrap.html)
 
 > Afin de retirer les option de protections d'acces au fichier, executer la commande ci-dessous dans votre powershell en mode administrateur.
-```
+
+
+```cmd
 set-executionpolicy unrestricted
 ```
 
@@ -242,16 +227,21 @@ Importer du JavaScript Bootstrap
 ```cmd
  yarn add jquery popper.js --dev
 ```
+### Gerer le CSS et Javascript
 
+[Gerer le CSS et Javascript](https://symfony.com/doc/current/frontend.html)
 
+```cmd
+composer require symfony/flex
+composer remove symfony/symfony
+composer require annotations asset orm-pack twig \
+logger mailer form security translation validator
+composer require --dev dotenv maker-bundle orm-fixtures profiler
+rm -rf vendor/*
+composer install
 composer require symfony/webpack-encore-bundle
 yarn install
-yarn add @symfony/webpack-encore --dev
-yarn add bootstrap --dev
-yarn add jquery popper.js --dev
 ```
-
-Dans le fichier MaSuperAgence\assets\styles\app.css
 
 
 
@@ -260,23 +250,28 @@ Dans le fichier base.html.twig
 ```html
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-        {% block stylesheets %}{% endblock %}
-
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-    </body>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome at Home!
+			{% endblock %}
+		</title>
+		{% block stylesheets %}
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		{% endblock %}
+	</head>
+	<body>
+		{% block body %}{% endblock %}
+		{% block javascripts %}{% endblock %}
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</body>
 </html>
-
 ```
+
+Dans le fichier home.html.twig, a la'aide de lm'autocompletion de l'ide, faire un jumbotron (template bootstrap).
+
 
 
 
