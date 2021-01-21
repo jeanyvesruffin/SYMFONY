@@ -2,19 +2,28 @@
 
 - [SYMFONY](#symfony)
 - [Prerequis](#prerequis)
-- [Creation du projet](#creation-du-projet)
-	- [Demarrer le projet symfony](#demarrer-le-projet-symfony)
-	- [Utilisation de la console php](#utilisation-de-la-console-php)
-- [Creation du site](#creation-du-site)
-	- [Principe de routing et services](#principe-de-routing-et-services)
-		- [A l'aide du fichier routes.yaml](#a-laide-du-fichier-routesyaml)
-		- [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
-	- [Principe de Templates](#principe-de-templates)
-		- [Creation de la page Twig](#creation-de-la-page-twig)
-		- [Bootstrap](#bootstrap)
-		- [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
-	- [Ajout d'une barre de navigation](#ajout-dune-barre-de-navigation)
-	- [Creation de la second page](#creation-de-la-second-page)
+- [Creation de notre environnement de developpement symfony](#creation-de-notre-environnement-de-developpement-symfony)
+  - [Demarrer le projet symfony](#demarrer-le-projet-symfony)
+  - [Utilisation de la console php](#utilisation-de-la-console-php)
+- [Creation de nos premieres page de site](#creation-de-nos-premieres-page-de-site)
+  - [Principe de routing et services](#principe-de-routing-et-services)
+    - [A l'aide du fichier routes.yaml](#a-laide-du-fichier-routesyaml)
+    - [A l'aide d'annotation dans nos controller](#a-laide-dannotation-dans-nos-controller)
+  - [Principe de Templates](#principe-de-templates)
+    - [Creation de la page Twig](#creation-de-la-page-twig)
+    - [Bootstrap](#bootstrap)
+    - [Gerer le CSS et Javascript](#gerer-le-css-et-javascript)
+  - [Ajout d'une barre de navigation](#ajout-dune-barre-de-navigation)
+  - [Creation de la second page](#creation-de-la-second-page)
+  - [Refactorisation de nos controllers a l'aide `extends AbstractController`](#refactorisation-de-nos-controllers-a-laide-extends-abstractcontroller)
+  - [Ajout du lien actif "Acheter" dans la navBar lorsque l'on est sur la page acheter.](#ajout-du-lien-actif-acheter-dans-la-navbar-lorsque-lon-est-sur-la-page-acheter)
+- [Doctrine](#doctrine)
+  - [Creation de la base de donnees](#creation-de-la-base-de-donnees)
+  - [Ajout de champs dans la base de donnees](#ajout-de-champs-dans-la-base-de-donnees)
+  - [Interraction avec la base de donnees](#interraction-avec-la-base-de-donnees)
+    - [Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)](#creer-un-enregistrement-par-le-codage-instance-entity-et-initialisation-de-ces-attributs)
+    - [Recuperer un enregistrement 1er methode](#recuperer-un-enregistrement-1er-methode)
+    - [Recuperer un enregistrement 2eme methode a l'aide d'injection](#recuperer-un-enregistrement-2eme-methode-a-laide-dinjection)
 
 <!-- /TOC -->
 
@@ -36,7 +45,7 @@ symfony -v
 symfony check:requirements
 ```
 
-# Creation du projet
+# Creation de notre environnement de developpement symfony
 
 ```cmd
 composer create-project symfony/website-skeleton [NOM PROJET]
@@ -86,7 +95,12 @@ Pour controller les injections
 php bin/console debug:autowiring
 ```
 
-# Creation du site
+Pour connaitre les commandes de creation automatique de code
+```cmd
+php bin/console make [option]
+```
+
+# Creation de nos premieres page de site
 
 ## Principe de routing et services
 
@@ -306,7 +320,7 @@ Vous pouvez utiliser Twig pour la redirection lors du clic sur Mon agence, en aj
 
 Celle-ci nous retournera la liste des biens (lien "Acheter").
 
-Dans le fichier MaSuperAgence\templates\base.html.twig
+Dans le fichier MaSuperAgence\templates\base.html.twig. Ajout du href pointant sur `path('property.index')`.
 
 ```html
 <!DOCTYPE html>
@@ -374,6 +388,18 @@ class PropertyController
 
 ```
 
+Et creons le template associe, dans MaSuperAgence\templates\property\index.html.twig
+
+```html
+{% extends "base.html.twig" %}
+{% block title 'Voir tous nos biens' %}
+{% block body %}
+<div class="container mt-4">
+    <h1>Voir les biens</h1>
+</div>
+{% endblock %}
+```
+
 Commentons notre fichier routes et faisons de meme pour la page d'accueil.
 
 Dans MaSuperAgence\src\Controller\HomeController.php
@@ -414,8 +440,338 @@ class HomeController
 
 ## Refactorisation de nos controllers a l'aide `extends AbstractController`
 
+A l'aide de la classe AbstractController, nous pouvons heriter des methodes nous permettant d'afficher une vue (render), entre autre.
+
 MaSuperAgence\src\Controller\HomeController.php ==> Deviens alors:
 
 ```php
+class HomeController extends AbstractController
+{
+    /**
+     * @Route ("/",  name="home")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return $this->render('pages/home.html.twig');
+    }
+}
+```
+MaSuperAgence\src\Controller\PropertyController.php ==> Deviens alors:
+
+```php
+class PropertyController extends AbstractController
+{
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return $this->render('property/index.html.twig');
+    }
+}
+```
+
+## Ajout du lien actif "Acheter" dans la navBar lorsque l'on est sur la page acheter.
+
+Au niveau de notre controller `PropertyController` nous pouvons ajouter au render de templet des parametres ici l'ajout du controller ou nous pouvons envoyer la page `current_menu` et nous y affectons la valeur `properties` comme cela.
+
+Dans PropertyController.
+
+```php
+class PropertyController extends AbstractController
+{
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return $this->render('property/index.html.twig',[
+			'current_menu'=> 'properties'
+			
+        ]);
+    }
+}
+```
+
+Puis dans notre templet base.html.twig nous ajoutons une condition twig qui rend le lien Acheter de la navBar actif.
+```html
+<a class="nav-link {% if current_menu is defined and current_menu == 'properties' %}active{% endif %}" href="{{ path('property.index') }}">Acheter</a>
+```
+
+# Doctrine
+
+Le framework Symfony utilise par defaut l’ORM Doctrine qui permet d'interagir avec la base de donnees plus facilement.
+
+## Creation de la base de donnees
+
+>**Pour cette partie nous utilisons [Wampserver](https://www.wampserver.com/) pour gerer le serveur. Bien suivre son installation. Enfin utiliser un driver plugin de votre ide pour visualiser votre base de donnees autrement que par phpmyadmin par exemple**
+
+
+Nous allons creer la base de donnees a l'aide d'une ligne de commande, celle-ci prendra en configuration les parametres indiques dans notre fichier .env soit DATABASE_URL="mysql://root:root@127.0.0.1:3306/masuperagence?serverVersion=5.7" dans notre cas.
+
+Exemple de creation de l'entity Property ayant comme champs title de type string varchar 255, not nullable et description de type txt, nullable
+```cmd
+php bin/console doctrine:database:create
+```
+
+Nous ajoutons ensuite la base de donnee dans l'IDE (VSCODE) a l'aide de plugin (driver) ici mysql.
+
+Ensuite, nos allons utiliser la console php pour generer une entite automatiquement a l'aide de la commande suivante, une entite est une classe qui represente un enregistrement dans la base de donnee:
+
+```cmd
+ php bin/console make:entity
+
+ Class name of the entity to create or update (e.g. TinyElephant):
+ > Property
+
+ created: src/Entity/Property.php
+ created: src/Repository/PropertyRepository.php
+  Entity generated! Now let's add some fields!
+ You can always add more fields later manually or by re-running this command.
+ New property name (press <return> to stop adding fields):
+ > title
+
+ Field type (enter ? to see all types) [string]:
+ > string
+
+ Field length [255]:
+ >
+
+ Can this field be null in the database (nullable) (yes/no) [no]:
+ >
+
+ updated: src/Entity/Property.php
+ Add another property? Enter the property name (or press <return> to stop adding fields):
+ > description
+
+ Field type (enter ? to see all types) [string]:
+ > text
+ 
+ Can this field be null in the database (nullable) (yes/no) [no]:
+ > yes
+
+ updated: src/Entity/Property.php
+ Add another property? Enter the property name (or press <return> to stop adding fields):
+ >
+  Success! 
+  Next: When you're ready, create a migration with php bin/console make:migration
+```
+Puis faire la commande de migration (Entity -->database) suivante, celle-ci generera le fichier necessaire a la migration.
+
+```cmd
+php bin/console make:migration
+```
+
+Nous pouvons examiner le fichier genere (MaSuperAgence\migrations\Version20210121101413.php) qui defini les etapes de creation et migration du projet, nous pouvons remarquer la sequence de script Sql pour la creation de la table etc...
+Une fois le fichier verifier nous pouvons effectuer la migration.
+
+```cmd
+php bin/console doctrine:migrations:migrate
+ WARNING! You are about to execute a migration in database "masuperagence" that could result in schema changes and data loss. Are you sure you wish to continue? (yes/no) [yes]:
+ >
+
+[notice] Migrating up to DoctrineMigrations\Version20210121101413
+[notice] finished in 722.9ms, used 20M memory, 1 migrations executed, 1 sql queries
 
 ```
+
+![database_vscode](ressources\database_vscode.PNG)
+
+**Attention au besoin renommer l'annotaion de votre entity telquelle sinon peux generer une erreur**
+
+```php
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
+ */
+class Property
+{
+}
+```
+
+## Ajout de champs dans la base de donnees
+
+La premiere methode consiste a modifier le fichier Property.php et y ajouter un attribut (qui sera notre champ), y mettre l'annotation voulu (ici `type="integer"`) puis creer les getters et setters.
+
+L'autre methode bien plus rapide consiste a utiliser la console comme ci-dessous.
+
+```cmd
+php bin/console make:entity Property
+// Generer les champs surface, rooms, bedrooms, floor, price, heat, city, address, postal_code, sold et created_at
+php bin/console make:migration
+```
+
+Si en controlant le fichier de migration vous souhaitez le modifier , c'est le moment!! Avant d'effectuer celle-ci sur le serveur.
+Exemple pour le champs `sold` nous souahitons par defaut qu'il soit a `false`. Alors nous ajouterons dans son annotation dans le fichier Property.php
+
+```php
+/**
+ * @ORM\Column(type="boolean", options={"default": false} )
+ */
+private $sold;
+```
+
+On supprime le fichier Version, puis on le regenere avac la commande
+```cmd
+php bin/console make:migration
+```
+
+une fois regener nous pouvons constater que desormais `ADD sold TINYINT(1) DEFAULT \'0\' NOT NULL`.
+Executer la commande de migration:
+
+```cmd
+php bin/console doctrine:migrations:migrate
+```
+
+Controler votre base de donnees:
+![database_vscode_2](ressources\database_vscode_2.PNG)
+
+## Interraction avec la base de donnees
+
+### Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)
+
+* Creer une instance de votre entite dans le fichier controller.
+* Affecter des valeurs aux attributs de l'entite a l'aide des setters dans le fichier controller.
+* Nous integrerons une constante pour le champs heat, ainsi qu'initialiserons le champs created_at a travers le constructeur de la class Property et sold a travers son initialisation `private $sold = false`.
+* Affectons dans une variable `entityManager`, l'envoi de cette entite vers la base de donnees a l'aide de `ManagerRegistry` retourne par la methode `getDoctrine` de la classe AbstractController. Puis nous utilisons cette variable pour utiliser la methode `persist()` pour faire persister notre entite. Et enfin nous mettons a jour la base de donnee a l'aide de la methode `flash` qui portera tous les changement d'entity dans notre base de donnees.
+* Controller sur votre site que tous se passe bien. A l'aide de la barre de debug cliquer sur databaseQuery pour visualiser les requetes effectuees. Nous pouvons voir notre bien qui est bien creer dans notre base de donnees. Nosu pouvons controller a l'aide de l'IDE ou phpmyadmin que tous est ok.
+
+Dans PropertyController.php
+```php
+<?php
+class PropertyController extends AbstractController
+{
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        $property = new Property();
+        $property->setTitle('Mon premier bien')
+        ->setPrice(200000)
+        ->setRooms(4)
+        ->setBedrooms(3)
+        ->setDescription('Une petite description')
+        ->setSurface(60)
+        ->setFloor(4)
+        ->setHeat(1)
+        ->setCity('Montpellier')
+        ->setAddress('64 rue Gambetta')
+        ->setPostalCode('34000');
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($property);
+        $entityManager->flush();
+        return $this->render('property/index.html.twig',[
+            'current_menu'=> 'properties'
+        ]);
+    }
+}
+```
+
+Integration constante et initialisation created_at dans Property.php
+```php
+const HEAT = [
+    0=>'electric',
+    1=>'gaz'
+];
+private $sold = false;
+```
+
+>Nous allons commenter notre enregistrement precedent afin de ne pas le regenerer at allons recuperer notre enregistrement.
+
+### Recuperer un enregistrement 1er methode
+
+* Doit faire appel au repository. Initialiser a l'aide de doctrine nous l'affectons a notre variable `$repository`.
+* Puis faire un `dump($repository)` pour visualiser le retour. Tester le retour et visualiser son contenu dans la barre de debugage de votre page.
+  
+```php
+class PropertyController extends AbstractController
+{
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        $repository = $this->getDoctrine()->getRepository(Property::class);
+        dump($repository);
+        return $this->render('property/index.html.twig',[
+            'current_menu'=> 'properties'
+        ]);
+    }
+}
+```
+
+![Controlle a l'aide du debuggeur php](ressources\reponse_1.PNG)
+
+> Commenter ces dernieres lignes afin de proceder a la methode par injection
+
+
+### Recuperer un enregistrement 2eme methode a l'aide d'injection
+
+* 1er methode a l'aide du constructeur. Plus interressant si le repository est utilise sur plusieurs fonction.
+
+```php
+class PropertyController extends AbstractController
+{
+    /**
+     *
+     * @var PropertyRepository
+     */
+    private $repository;
+
+    public function __construct(PropertyRepository $repository)
+    {
+      $this->repository = $repository;  
+    }
+
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        $property = $this->repository->find(1);
+        dump($property);
+        return $this->render('property/index.html.twig', [
+            'current_menu' => 'properties'
+        ]);
+    }
+}
+```
+
+* 2eme methode a l'aide de parametre sur la fonction index
+
+```php
+class PropertyController extends AbstractController
+{
+      /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(PropertyRepository $repository): Response
+    {
+        $property = $this->repository->find(1);
+        dump($property);
+        return $this->render('property/index.html.twig', [
+            'current_menu' => 'properties'
+        ]);
+    }
+}
+```
+
+> Nous utilisons la methode `find(1)` pour recuperer le 1er enregistrement.
+> 
+> Nous utilisons la methode `findAll()` pour recuperer tous les enregistrements (stocke dans un tableau).
+> 
+> Nous utilisons la methode `findOneBy(['floor'=>4])` pour recuperer tous les enregistrements repondant au critere floor a 4.
+
+
+![Controle de la reponse find(1)](ressources\reponse_2.PNG)
+
+![Controle de la reponse findAll()](ressources\reponse_3.PNG)
+
+![Controle de la reponse findOneBy(['floor'=>4])](ressources\reponse_4.PNG)
