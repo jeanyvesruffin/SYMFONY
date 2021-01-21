@@ -19,6 +19,13 @@ class PropertyRepository extends ServiceEntityRepository
         parent::__construct($registry, Property::class);
     }
 
+    public  function findAllVisible()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.sold = false')
+            ->getQuery()
+            ->getResult();
+    }
     // /**
     //  * @return Property[] Returns an array of Property objects
     //  */

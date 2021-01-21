@@ -20,10 +20,13 @@
 - [Doctrine](#doctrine)
   - [Creation de la base de donnees](#creation-de-la-base-de-donnees)
   - [Ajout de champs dans la base de donnees](#ajout-de-champs-dans-la-base-de-donnees)
-  - [Interraction avec la base de donnees](#interraction-avec-la-base-de-donnees)
-    - [Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)](#creer-un-enregistrement-par-le-codage-instance-entity-et-initialisation-de-ces-attributs)
-    - [Recuperer un enregistrement 1er methode](#recuperer-un-enregistrement-1er-methode)
-    - [Recuperer un enregistrement 2eme methode a l'aide d'injection](#recuperer-un-enregistrement-2eme-methode-a-laide-dinjection)
+  - [Interraction avec la base de donnees Create Read Update Delete](#interraction-avec-la-base-de-donnees-create-read-update-delete)
+    - [`Create` Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)](#create-creer-un-enregistrement-par-le-codage-instance-entity-et-initialisation-de-ces-attributs)
+    - [`Read` Recuperer un enregistrement](#read-recuperer-un-enregistrement)
+      - [1er methode](#1er-methode)
+      - [2eme methode Recuperer un enregistrement a l'aide des methodes injections (verifier au prealable avec `php bin/console:autowiring`)](#2eme-methode-recuperer-un-enregistrement-a-laide-des-methodes-injections-verifier-au-prealable-avec-php-binconsoleautowiring)
+      - [3eme methode Recuperer un enregistrement a l'aide d'une methode cree qui utilisera la fonction `createQueryBuilder()`](#3eme-methode-recuperer-un-enregistrement-a-laide-dune-methode-cree-qui-utilisera-la-fonction-createquerybuilder)
+    - [`Update` Mise a jour d'un enregistrement](#update-mise-a-jour-dun-enregistrement)
 
 <!-- /TOC -->
 
@@ -628,9 +631,9 @@ php bin/console doctrine:migrations:migrate
 Controler votre base de donnees:
 ![database_vscode_2](ressources\database_vscode_2.PNG)
 
-## Interraction avec la base de donnees
+## Interraction avec la base de donnees Create Read Update Delete
 
-### Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)
+### `Create` Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)
 
 * Creer une instance de votre entite dans le fichier controller.
 * Affecter des valeurs aux attributs de l'entite a l'aide des setters dans le fichier controller.
@@ -682,7 +685,9 @@ private $sold = false;
 
 >Nous allons commenter notre enregistrement precedent afin de ne pas le regenerer at allons recuperer notre enregistrement.
 
-### Recuperer un enregistrement 1er methode
+### `Read` Recuperer un enregistrement
+
+#### 1er methode
 
 * Doit faire appel au repository. Initialiser a l'aide de doctrine nous l'affectons a notre variable `$repository`.
 * Puis faire un `dump($repository)` pour visualiser le retour. Tester le retour et visualiser son contenu dans la barre de debugage de votre page.
@@ -710,7 +715,7 @@ class PropertyController extends AbstractController
 > Commenter ces dernieres lignes afin de proceder a la methode par injection
 
 
-### Recuperer un enregistrement 2eme methode a l'aide d'injection
+#### 2eme methode Recuperer un enregistrement a l'aide des methodes injections (verifier au prealable avec `php bin/console:autowiring`)
 
 * 1er methode a l'aide du constructeur. Plus interressant si le repository est utilise sur plusieurs fonction.
 
@@ -775,3 +780,80 @@ class PropertyController extends AbstractController
 ![Controle de la reponse findAll()](ressources\reponse_3.PNG)
 
 ![Controle de la reponse findOneBy(['floor'=>4])](ressources\reponse_4.PNG)
+
+#### 3eme methode Recuperer un enregistrement a l'aide d'une methode cree qui utilisera la fonction `createQueryBuilder()` 
+
+Exemple si nous desirons recuperer tout les sold a false.
+
+* Methode a creer dans le repository
+Exemple:
+```php
+class PropertyRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Property::class);
+    }
+
+    public  function findAllSisible()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.exampleField = :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+}
+```
+Descrtiption de la methode ci-dessus:
+* `p` correspondera a l'alias de notre table ici Property alias p
+* `andWhere` permet d'ajouter des conditions a notre requete
+* `setParameter` permet d'ajouter des parametres a notre requete
+* `orderBy` correspond a ORDER BY pour notre requete
+* `setMaxResults` correspond a LIMIT pour notre requete
+* `getQuery` pour recuperer la requete
+* `getResult` pour recuperer les resultats
+
+Dans PropertyRepository.php
+```php
+class PropertyRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Property::class);
+    }
+
+    public  function findAllVisible()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.sold = false')
+            ->getQuery()
+            ->getResult();
+    }
+}
+```
+
+Et enfin dans notre PropertyController.php
+```php
+class PropertyRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Property::class);
+    }
+
+    public  function findAllVisible()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.sold = false')
+            ->getQuery()
+            ->getResult();
+    }
+}
+```
+
+Nous pouvons controler votre site et votre reponse.
+
+### `Update` Mise a jour d'un enregistrement

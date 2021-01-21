@@ -27,8 +27,10 @@ class PropertyController extends AbstractController
      */
     public function index(): Response
     {
-        $property = $this->repository->findOneBy(['floor'=>4]);
+        $property = $this->repository->findAllVisible();
         dump($property);
+        // $property = $this->repository->findOneBy(['floor'=>4]);
+        // dump($property);
         // $repository = $this->getDoctrine()->getRepository(Property::class);
         // dump($repository);
 
