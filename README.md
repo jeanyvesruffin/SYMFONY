@@ -775,17 +775,17 @@ class PropertyController extends AbstractController
 }
 ```
 
-> Nous utilisons la methode `find(1)` pour recuperer le 1er enregistrement.
 > 
-> Nous utilisons la methode `findAll()` pour recuperer tous les enregistrements (stocke dans un tableau).
 > 
-> Nous utilisons la methode `findOneBy(['floor'=>4])` pour recuperer tous les enregistrements repondant au critere floor a 4.
 
 
+Nous utilisons la methode `find(1)` pour recuperer le 1er enregistrement.
 <img src="ressources\reponse_2.PNG"  width="240" height="240">
 
+Nous utilisons la methode `findAll()` pour recuperer tous les enregistrements (stocke dans un tableau).
 <img src="ressources\reponse_3.PNG"  width="240" height="240">
 
+Nous utilisons la methode `findOneBy(['floor'=>4])` pour recuperer tous les enregistrements repondant au critere floor a 4.
 <img src="ressources\reponse_4.PNG"  width="240" height="240">
 
 #### 3eme methode Recuperer un enregistrement a l'aide d'une methode cree qui utilisera la fonction `createQueryBuilder()` 
