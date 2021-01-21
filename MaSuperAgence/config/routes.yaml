@@ -1,9 +1,9 @@
 # nom de la route (home)
-home:
+# home:
   # chemin de la route (a la racine /)
-  path: /
+  # path: /
   # controller appele (HomeController) ainsi que la methode appele (methode index)
-  controller: App\Controller\HomeController::index
+  # controller: App\Controller\HomeController::index
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index

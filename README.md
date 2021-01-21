@@ -181,7 +181,7 @@ App\Controller\HomeController:
 
 ###  A l'aide d'annotation dans nos controller
 
-[Nous utiliserons cette methode plus loin](../README.md#ancre_annot)
+Nous utiliserons cette methode plus loin lors de la creation de la seconde page.
 
 ## Principe de Templates
 
@@ -347,4 +347,75 @@ Dans le fichier MaSuperAgence\templates\base.html.twig
 </html>
 ```
 
-[ici](#ancre_annot) 
+Nous allons ici creer la route a l'aide des annotations dans le controller.
+
+Dans le fichier MaSuperAgence\src\Controller\PropertyController.php
+```php
+<?php
+
+namespace App\Controller;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class PropertyController
+{
+
+    /**
+     * Undocumented function
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return new Response('Les biens');
+    }
+}
+
+```
+
+Commentons notre fichier routes et faisons de meme pour la page d'accueil.
+
+Dans MaSuperAgence\src\Controller\HomeController.php
+
+```php
+<?php
+
+namespace App\Controller;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
+
+class HomeController
+{
+    /**
+     * Undocumented variable
+     * 
+     * @var Environment
+     */
+    private $twig;
+
+    public function __construct(Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+    /**
+     * Undocumented function
+     * @Route ("/",  name="home")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return new Response($this->twig->render('pages/home.html.twig'));
+    }
+}
+```
+
+## Refactorisation de nos controllers a l'aide `extends AbstractController`
+
+MaSuperAgence\src\Controller\HomeController.php ==> Deviens alors:
+
+```php
+
+```
