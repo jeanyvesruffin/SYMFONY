@@ -20,7 +20,7 @@
 - [Doctrine](#doctrine)
   - [Creation de la base de donnees](#creation-de-la-base-de-donnees)
   - [Ajout de champs dans la base de donnees](#ajout-de-champs-dans-la-base-de-donnees)
-  - [Interraction avec la base de donnees Create Read Update Delete](#interraction-avec-la-base-de-donnees-create-read-update-delete)
+  - [interaction avec la base de donnees Create Read Update Delete](#interaction-avec-la-base-de-donnees-create-read-update-delete)
     - [`Create` Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)](#create-creer-un-enregistrement-par-le-codage-instance-entity-et-initialisation-de-ces-attributs)
     - [`Read` Recuperer un enregistrement](#read-recuperer-un-enregistrement)
       - [1er methode](#1er-methode)
@@ -513,7 +513,11 @@ Le framework Symfony utilise par defaut l’ORM Doctrine qui permet d'interagir 
 >**Pour cette partie nous utilisons [Wampserver](https://www.wampserver.com/) pour gerer le serveur. Bien suivre son installation. Enfin utiliser un driver plugin de votre ide pour visualiser votre base de donnees autrement que par phpmyadmin par exemple**
 
 
-Nous allons creer la base de donnees a l'aide d'une ligne de commande, celle-ci prendra en configuration les parametres indiques dans notre fichier .env soit DATABASE_URL="mysql://root:root@127.0.0.1:3306/masuperagence?serverVersion=5.7" dans notre cas.
+Nous allons creer la base de donnees a l'aide d'une ligne de commande, celle-ci prendra en configuration les parametres indiques dans notre fichier .env 
+
+```env
+DATABASE_URL="mysql://root:root@127.0.0.1:3306/masuperagence?serverVersion=5.7"
+```
 
 Exemple de creation de l'entity Property ayant comme champs title de type string varchar 255, not nullable et description de type txt, nullable
 ```cmd
@@ -581,7 +585,8 @@ php bin/console doctrine:migrations:migrate
 
 ```
 
-![database_vscode](ressources\database_vscode.PNG)
+
+<img src="ressources\database_vscode.PNG"  width="120" height="120">
 
 **Attention au besoin renommer l'annotaion de votre entity telquelle sinon peux generer une erreur**
 
@@ -629,9 +634,10 @@ php bin/console doctrine:migrations:migrate
 ```
 
 Controler votre base de donnees:
-![database_vscode_2](ressources\database_vscode_2.PNG)
 
-## Interraction avec la base de donnees Create Read Update Delete
+<img src="ressources\database_vscode_2.PNG"  width="120" height="120">
+
+## interaction avec la base de donnees Create Read Update Delete
 
 ### `Create` Creer un enregistrement par le codage (instance Entity et initialisation de ces attributs)
 
@@ -710,7 +716,8 @@ class PropertyController extends AbstractController
 }
 ```
 
-![Controlle a l'aide du debuggeur php](ressources\reponse_1.PNG)
+<img src="ressources\reponse_1.PNG"  width="120" height="120">
+
 
 > Commenter ces dernieres lignes afin de proceder a la methode par injection
 
@@ -775,11 +782,11 @@ class PropertyController extends AbstractController
 > Nous utilisons la methode `findOneBy(['floor'=>4])` pour recuperer tous les enregistrements repondant au critere floor a 4.
 
 
-![Controle de la reponse find(1)](ressources\reponse_2.PNG)
+<img src="ressources\reponse_2.PNG"  width="120" height="120">
 
-![Controle de la reponse findAll()](ressources\reponse_3.PNG)
+<img src="ressources\reponse_3.PNG"  width="120" height="120">
 
-![Controle de la reponse findOneBy(['floor'=>4])](ressources\reponse_4.PNG)
+<img src="ressources\reponse_4.PNG"  width="120" height="120">
 
 #### 3eme methode Recuperer un enregistrement a l'aide d'une methode cree qui utilisera la fonction `createQueryBuilder()` 
 
