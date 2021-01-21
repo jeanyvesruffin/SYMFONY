@@ -586,7 +586,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 
-<img src="ressources\database_vscode.PNG"  width="240" height="240">
+<img src="ressources\database_vscode.PNG"  >
 
 **Attention au besoin renommer l'annotaion de votre entity telquelle sinon peux generer une erreur**
 
@@ -635,7 +635,7 @@ php bin/console doctrine:migrations:migrate
 
 Controler votre base de donnees:
 
-<img src="ressources\database_vscode_2.PNG"  width="240" height="240">
+<img src="ressources\database_vscode_2.PNG"  >
 
 ## interaction avec la base de donnees Create Read Update Delete
 
@@ -716,7 +716,7 @@ class PropertyController extends AbstractController
 }
 ```
 
-<img src="ressources\reponse_1.PNG"  width="240" height="240">
+<img src="ressources\reponse_1.PNG"  >
 
 
 > Commenter ces dernieres lignes afin de proceder a la methode par injection
@@ -777,15 +777,15 @@ class PropertyController extends AbstractController
 
 Nous utilisons la methode `find(1)` pour recuperer le 1er enregistrement.
 
-<img src="ressources\reponse_2.PNG"  width="240" height="240">
+<img src="ressources\reponse_2.PNG"  >
 
 Nous utilisons la methode `findAll()` pour recuperer tous les enregistrements (stocke dans un tableau).
 
-<img src="ressources\reponse_3.PNG"  width="240" height="240">
+<img src="ressources\reponse_3.PNG"  >
 
 Nous utilisons la methode `findOneBy(['floor'=>4])` pour recuperer tous les enregistrements repondant au critere floor a 4.
 
-<img src="ressources\reponse_4.PNG"  width="240" height="240">
+<img src="ressources\reponse_4.PNG"  >
 
 #### 3eme methode Recuperer un enregistrement a l'aide d'une methode cree qui utilisera la fonction `createQueryBuilder()` 
 
