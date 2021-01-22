@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\PropertyRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,9 +16,16 @@ class PropertyController extends AbstractController
      */
     private $repository;
 
-    public function __construct(PropertyRepository $repository)
+    /**
+     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(PropertyRepository $repository, EntityManagerInterface $entityManager)
     {
         $this->repository = $repository;
+        $this->entityManager = $entityManager;
     }
 
 
@@ -28,7 +36,9 @@ class PropertyController extends AbstractController
     public function index(): Response
     {
         $property = $this->repository->findAllVisible();
-        dump($property);
+        // dump($property);
+        $property[0]->setSold(true);
+        $this->entityManager->flush();
         // $property = $this->repository->findOneBy(['floor'=>4]);
         // dump($property);
         // $repository = $this->getDoctrine()->getRepository(Property::class);
