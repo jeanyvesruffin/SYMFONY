@@ -4,6 +4,7 @@
 - [Prerequis](#prerequis)
 - [Creation de notre environnement de developpement symfony](#creation-de-notre-environnement-de-developpement-symfony)
   - [Demarrer le projet symfony](#demarrer-le-projet-symfony)
+  - [Demarrer un projet existant sur phpstorm](#demarrer-un-projet-existant-sur-phpstorm)
   - [Utilisation de la console php](#utilisation-de-la-console-php)
 - [Creation de nos premieres page de site](#creation-de-nos-premieres-page-de-site)
   - [Principe de routing et services](#principe-de-routing-et-services)
@@ -76,6 +77,27 @@ Faire pointer votre repertoire Apache de ressource sur le dossier public (vs www
 symfony server:start
 ```
 
+## Demarrer un projet existant sur phpstorm
+
+Pour recuperer votre projet Symfony de Github sur un autre poste :
+
+* Creer un dossier en local
+* Ouvrir PhpStorm
+* Selectionner dans la fenetre modal « Checkout from Version Control->Git »
+  * Remplir les informations demandees
+* Installer les dependances avec la console :
+    * composer install
+    * vider le cache (var/cache/dev)
+    * composer update
+    * vider le cache (var/cache/dev)
+    * composer dump-autoload
+* Recuperer la structure de la base de donnees
+    * Modifier le fichier parameters.yml
+    * Dans la console :
+    * php bin/console doctrine:database:create
+    * php bin/console doctrine:schema:update –dump-sql
+    * php bin/console doctrine:schema:update –force
+
 ## Utilisation de la console php
 
 Pour avoir la liste des comandes de la console.
@@ -102,6 +124,14 @@ Pour connaitre les commandes de creation automatique de code
 ```cmd
 php bin/console make [option]
 ```
+
+Doctrine command line
+
+Pour connaitre la liste des commandes Doctrine
+```cmd
+
+```
+
 
 # Creation de nos premieres page de site
 
@@ -863,3 +893,50 @@ class PropertyRepository extends ServiceEntityRepository
 Nous pouvons controler votre site et votre reponse.
 
 ### `Update` Mise a jour d'un enregistrement
+
+On vas de nouveau utiliser `EntityManager` dans notre controller. Dans notre cas nous pouvons utiliser l'autowiring de Doctrine\ORM\EntityManagerInterface.
+
+* Ajouter a votre constructeur de controller `EntityManagerInterface $entityManager`
+* Declarer votre variable `private $entityManager` annote `@var ObjectManager`
+* A n'importe qu'elle moment vous pouvez l'utiliser, l'avantage est que toutes nos entites declarer dans nos repository seront "traquer" par entityManager et mise a jour a l'aide de `$this->entityManager->flush()`.
+
+Exemple si l'on souhaite mettre a jour la premiere propriete de la premiere ligne et passer le sold a true
+
+```php
+<?php
+use Doctrine\ORM\EntityManagerInterface;
+
+class PropertyController extends AbstractController
+{
+     /**
+     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(PropertyRepository $repository, EntityManagerInterface $entityManager)
+    {
+        $this->repository = $repository;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/biens",  name="property.index")
+     * @return Response
+     */
+    public function index(): Response
+    {
+        $property = $this->repository->findAllVisible();
+        $property[0]->setSold(true);
+        $this->entityManager->flush();
+        return $this->render('property/index.html.twig', [
+            'current_menu' => 'properties'
+        ]);
+    }
+}
+```
+
+Controle dans notre navigateur
+<img src="ressources\query.PNG">
+
+Nous pouvons visualiser les differentes requetes, a savoir, l'update.
